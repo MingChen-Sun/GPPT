@@ -96,7 +96,7 @@ class GraphSAGE(nn.Module):
         cluster = KMeans(n_clusters=self.center_num,random_state=0).fit(features.detach().cpu())
         
         temp=torch.FloatTensor(cluster.cluster_centers_).cuda()
-        self.prompt.weight.data=temp
+        self.prompt.weight.data.copy(temp)
         
 
         p=[]
@@ -104,13 +104,13 @@ class GraphSAGE(nn.Module):
             p.append(features[labels==i].mean(dim=0).view(1,-1))
         temp=torch.cat(p,dim=0)
         for i in range(self.center_num):
-            self.pp[i].weight.data=temp
+            self.pp[i].weight.data.copy(temp)
         
     
     def update_prompt_weight(self,h):
         cluster = KMeans(n_clusters=self.center_num,random_state=0).fit(h.detach().cpu())
         temp=torch.FloatTensor(cluster.cluster_centers_).cuda()
-        self.prompt.weight.data=temp
+        self.prompt.weight.data.copy(temp)
 
     def get_mul_prompt(self):
         pros=[]
